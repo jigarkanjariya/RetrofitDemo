@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.jk.retrofitdemo.Sqlite_profile_example.NavigationActivity"
+    tools:showIn="@layout/app_bar_navigation">
+
+    <FrameLayout
+        android:id="@+id/fl_update"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+  <!--  <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome To"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/tv_navigationname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:textColor="@color/colorAccent"/> -->
+
+</LinearLayout>

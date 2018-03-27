@@ -1,5 +1,7 @@
 package com.jk.retrofitdemo.Sqlite_profile_example.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by Abc on 3/8/2018.
  */
@@ -13,6 +15,19 @@ public class Task {
     public boolean isChecked;
     public int taskLabelid;
     public String taskLabelName;
+    public ArrayList<Label> labels;
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public ArrayList<Label> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(ArrayList<Label> labels) {
+        this.labels = labels;
+    }
 
     public int getTaskLabelid() {
         return taskLabelid;

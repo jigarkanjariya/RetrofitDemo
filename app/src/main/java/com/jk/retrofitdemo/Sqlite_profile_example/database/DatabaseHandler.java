@@ -10,10 +10,13 @@ import android.util.Log;
 
 import com.jk.retrofitdemo.Sqlite_profile_example.model.Label;
 import com.jk.retrofitdemo.Sqlite_profile_example.model.Task;
+import com.jk.retrofitdemo.Sqlite_profile_example.model.TaskLabelId;
 import com.jk.retrofitdemo.Sqlite_profile_example.model.Taskjoinlabel;
 import com.jk.retrofitdemo.Sqlite_profile_example.model.UserProfile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Abc on 3/6/2018.
@@ -396,5 +399,87 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
     }
+    public void addTaskLabelid(TaskLabelId taskLabelId) {
+        db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_LABELID, taskLabelId.getLabelid());
+            values.put(KEY_TASKID, taskLabelId.getTaskid());
+            db.insertOrThrow(TABLE_TASKJOINLABEL, null, values);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d("Exception", "" + e);
+
+        } finally {
+            db.endTransaction();
+        }
+
+    }
+    public ArrayList<Label> joinTaskLabel(int taskid) {
+        db = getReadableDatabase();
+        ArrayList<TaskLabelId> labels = new ArrayList<TaskLabelId>();
+        ArrayList<Label> name = new ArrayList<>();
+        String TODO_SELECTED_QUERY = " SELECT * FROM " + TABLE_TASKJOINLABEL + " WHERE " + KEY_TASKID + "='" + taskid + "'";
+        Log.d(TAG, " " + TODO_SELECTED_QUERY);
+        db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(TODO_SELECTED_QUERY, null);
+        try {
+            Log.d(TAG, "joinTaskLabel: ........" + cursor.getCount());
+            while (cursor.moveToNext()) {
+                Label l = new Label();
+                TaskLabelId taskLabelId = new TaskLabelId();
+                taskLabelId.labelid = cursor.getInt(cursor.getColumnIndex(KEY_LABELID));
+
+                l.labelname = labelJoin(taskLabelId.labelid);
+                name.add(l);
+                labels.add(taskLabelId);
+
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get posts from database");
+        } finally {
+            cursor.close();
+        }
+        Log.d(TAG, "joinTaskLabel: Name Update" + name);
+
+        return name;
+    }
+    public ArrayList<Task> getAllTodo() {
+        ArrayList<Label> labellist = getAllLabelitem();
+       // ArrayList<TaskLabelId> taskLabelIds = getAllTaskLabelId();
+//        HashMap<Integer, Label> hashMap = new HashMap<>();
+//        for (Label obj : labellist) {
+//            hashMap.put(obj.getLabelId(), obj);
+//        }
+        Map<Integer, String> hashMap1 = new HashMap<>();
+
+        ArrayList<Task> task = new ArrayList<Task>();
+        ArrayList<TaskLabelId> list = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+        String TODO_SELECTED_QUERY = " SELECT * FROM " + TABLE_TODO;
+        db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(TODO_SELECTED_QUERY, null);
+        try {
+            while (cursor.moveToNext()) {
+                Task newTask = new Task();
+                newTask.id = cursor.getString(cursor.getColumnIndex(KEY_ID));
+                newTask.isChecked = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(KEY_STATE)));
+                newTask.task = cursor.getString(cursor.getColumnIndex(KEY_TASK));
+                int item = cursor.getInt(cursor.getColumnIndex(KEY_LABELID));
+                newTask.setLabels(joinTaskLabel(Integer.parseInt(newTask.id)));
+                task.add(newTask);
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get posts from database");
+        } finally {
+            cursor.close();
+        }
+
+        return task;
+    }
+
+
 
 }

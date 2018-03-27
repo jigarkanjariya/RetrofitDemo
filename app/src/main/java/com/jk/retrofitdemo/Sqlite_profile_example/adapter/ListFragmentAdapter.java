@@ -22,6 +22,7 @@ import com.jk.retrofitdemo.Sqlite_profile_example.NavigationActivity;
 import com.jk.retrofitdemo.Sqlite_profile_example.database.DatabaseHandler;
 import com.jk.retrofitdemo.Sqlite_profile_example.model.Label;
 import com.jk.retrofitdemo.Sqlite_profile_example.model.Task;
+import com.jk.retrofitdemo.Sqlite_profile_example.model.TaskLabelId;
 import com.jk.retrofitdemo.Sqlite_profile_example.utils.ItemAnimation;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class ListFragmentAdapter extends RecyclerView.Adapter<ListFragmentAdapte
     ArrayList<Task> listfragment;
     private ArrayList<Label> labelList = new ArrayList<>();
     private ArrayList<Label>labelselected;
+    private List<Integer> value=new ArrayList<Integer>();
     private Context context;
     private String item;
 
@@ -58,6 +60,9 @@ public class ListFragmentAdapter extends RecyclerView.Adapter<ListFragmentAdapte
         final Task task = listfragment.get(position);
         final DatabaseHandler db=new DatabaseHandler(context);
         final Task newtask=new Task();
+        Label label=new Label();
+        final TaskLabelId taskLabelId=new TaskLabelId();
+
         final Task userListModel = listfragment.get(position);
         holder.task.setText(userListModel.getTask());
         holder.check.setOnCheckedChangeListener(null);
@@ -78,6 +83,11 @@ public class ListFragmentAdapter extends RecyclerView.Adapter<ListFragmentAdapte
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         if (isChecked) {
+                            taskLabelId.labelid=labelList.get(which).getLabelId();
+                            taskLabelId.taskid= Integer.parseInt(task.getId());
+                            value.add(taskLabelId.getLabelid());
+                            db.addTaskLabelid(taskLabelId);
+
 
                         }
                     }
@@ -116,12 +126,32 @@ public class ListFragmentAdapter extends RecyclerView.Adapter<ListFragmentAdapte
                         builder.show();
 
                     }
+                }).setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        db.joinTaskLabel(taskLabelId.getTaskid());
+                        listfragment = db.getAllTodo();
+                        notifyDataSetChanged();
+                    }
                 });
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });
+
+//        ArrayList<Label> arrayoflabelname=task.getLabels();
+//        String labelname = "";
+//
+//        StringBuilder sb = new StringBuilder() ;
+//
+//        for (Label l:arrayoflabelname)
+//        {
+//            sb.append(labelname).append(l.getLabelname());
+//            labelname = ",";
+//
+//        }
 
         holder.label.setText(task.getTaskLabelName());
         holder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
